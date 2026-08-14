@@ -2,16 +2,27 @@
   "name": "manga.klara.works",
   "type": "module",
   "version": "0.0.1",
+  "license": "Apache-2.0 OR MIT",
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "check": "astro check",
+    "upload:manga": "node scripts/upload-manga.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.2.1"
+    "@astrojs/preact": "^6.0.2",
+    "astro": "^7.2.1",
+    "preact": "^10.29.8",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.0.0"
   }
 }

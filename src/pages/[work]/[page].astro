@@ -1,0 +1,22 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import MangaReader from '../../components/MangaReader';
+import ReaderLayout from '../../layouts/ReaderLayout.astro';
+import { assertUniqueWorkSlugs, readerPages } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const works = await getCollection('works');
+  assertUniqueWorkSlugs(works);
+  return works.flatMap((work) => readerPages(work).map((page, index) => ({
+    params: { work: work.data.slug, page: page.route },
+    props: { work, initialPage: index },
+  })));
+}
+interface Props { work: CollectionEntry<'works'>; initialPage: number; }
+const { work, initialPage } = Astro.props;
+const pages = readerPages(work);
+---
+<ReaderLayout title={`${work.data.title} ${pages[initialPage].label}`}>
+  <MangaReader client:load pages={pages} initialPage={initialPage} title={work.data.title} workUrl={`/${work.data.slug}/`} />
+  <noscript><p>漫画リーダーを表示するには JavaScript を有効にしてください。<a href={`/${work.data.slug}/`}>作品ページへ戻る</a></p></noscript>
+</ReaderLayout>
