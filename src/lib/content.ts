@@ -2,7 +2,7 @@ import type { CollectionEntry } from 'astro:content';
 
 export type Work = CollectionEntry<'works'>;
 
-export const imageBaseUrl = (import.meta.env.PUBLIC_IMAGE_BASE_URL || 'https://img.example.com').replace(/\/$/, '');
+export const imageBaseUrl = (import.meta.env.PUBLIC_IMAGE_BASE_URL || 'https://manga.storage.klara.works').replace(/\/$/, '');
 
 export function imageUrl(path: string): string {
   return `${imageBaseUrl}/${path.replace(/^\//, '')}`;
