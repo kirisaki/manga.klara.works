@@ -99,7 +99,12 @@ export default function MangaReader({ pages, initialPage, title, workUrl }: Prop
       setDragOffset(0);
       if (!dragged.current) {
         const ratio = event.clientX / window.innerWidth;
-        if (ratio >= .32 && ratio <= .68) setUiVisible((value) => !value);
+        if (wide) {
+          if (ratio < .5) next();
+          else previous();
+        } else if (ratio < .32) next();
+        else if (ratio > .68) previous();
+        else setUiVisible((value) => !value);
       }
     }
   };
@@ -117,16 +122,16 @@ export default function MangaReader({ pages, initialPage, title, workUrl }: Prop
             {(unit.length === 2 ? unit.toReversed() : unit).map((page) => <img key={page.url} src={page.url} alt={page.label} decoding="async" draggable={false} />)}
           </div>;
         })}
-        <button class="turn-zone next-zone" type="button" aria-label="次のページ" disabled={currentUnit === units.length - 1} onClick={() => { if (!dragged.current) next(); dragged.current = false; }} />
-        <button class="turn-zone previous-zone" type="button" aria-label="前のページ" disabled={currentUnit === 0} onClick={() => { if (!dragged.current) previous(); dragged.current = false; }} />
+        <span class={`turn-zone next-zone ${currentUnit === units.length - 1 ? 'disabled' : ''}`} aria-hidden="true" />
+        <span class={`turn-zone previous-zone ${currentUnit === 0 ? 'disabled' : ''}`} aria-hidden="true" />
       </div>
 
       <div class={`reader-ui ${uiVisible ? 'visible' : ''}`} aria-hidden={!uiVisible}>
         <header><a href={workUrl} aria-label="作品ページへ戻る">←</a><strong>{title}</strong><span /></header>
         <footer>
-          <button type="button" onClick={previous} disabled={currentUnit === 0}>前ページ</button>
-          <label><span>{currentLabel}</span><input aria-label="ページを選択" type="range" min="1" max={units.length} value={currentUnit + 1} onInput={(event) => goToUnit(Number(event.currentTarget.value) - 1)} /></label>
           <button type="button" onClick={next} disabled={currentUnit === units.length - 1}>次ページ</button>
+          <label><span>{currentLabel}</span><input aria-label="ページを選択" type="range" min="1" max={units.length} value={currentUnit + 1} onInput={(event) => goToUnit(Number(event.currentTarget.value) - 1)} /></label>
+          <button type="button" onClick={previous} disabled={currentUnit === 0}>前ページ</button>
         </footer>
       </div>
       <style>{`
@@ -152,13 +157,14 @@ export default function MangaReader({ pages, initialPage, title, workUrl }: Prop
         button { min-width: 72px; min-height: 44px; border: 1px solid #555; border-radius: 6px; background: #242424; color: white; }
         button:disabled { opacity: .35; }
         .stage .turn-zone { position: absolute; z-index: 1; top: 0; bottom: 0; width: 32%; min-width: 0; min-height: 0; padding: 0; border: 0; border-radius: 0; background: transparent; opacity: 1; }
-        .stage .turn-zone:disabled { cursor: default; }
+        .stage .turn-zone.disabled { cursor: default; }
         .stage .next-zone { left: 0; cursor: w-resize; }
         .stage .previous-zone { right: 0; cursor: e-resize; }
         .stage.dragging .turn-zone { cursor: grabbing; }
         label { flex: 1; display: grid; gap: 6px; text-align: center; font-size: .78rem; }
         input { width: 100%; accent-color: #b68bdd; }
         @media (max-width: 899px), (max-aspect-ratio: 4/3) { .spread { display: flex; } .spread img { width: 100%; } }
+        @media (min-width: 900px) and (min-aspect-ratio: 4/3) { .stage .turn-zone { width: 50%; } }
         @media (max-width: 520px) { footer button { min-width: 54px; padding-inline: 6px; font-size: .75rem; } }
       `}</style>
     </main>
