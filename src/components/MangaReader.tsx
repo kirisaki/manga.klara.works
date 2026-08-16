@@ -130,7 +130,7 @@ export default function MangaReader({ pages, initialPage, title, workUrl }: Prop
         <header><a href={workUrl} aria-label="作品ページへ戻る">←</a><strong>{title}</strong><span /></header>
         <footer>
           <button type="button" onClick={next} disabled={currentUnit === units.length - 1}>次ページ</button>
-          <label><span>{currentLabel}</span><input aria-label="ページを選択" type="range" min="1" max={units.length} value={currentUnit + 1} onInput={(event) => goToUnit(Number(event.currentTarget.value) - 1)} /></label>
+          <label><span>{currentLabel}</span><input aria-label="ページを選択" dir="rtl" type="range" min="1" max={units.length} value={currentUnit + 1} onInput={(event) => goToUnit(Number(event.currentTarget.value) - 1)} /></label>
           <button type="button" onClick={previous} disabled={currentUnit === 0}>前ページ</button>
         </footer>
       </div>
